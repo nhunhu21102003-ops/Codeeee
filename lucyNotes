@@ -27,7 +27,7 @@
         .football-bg { background: linear-gradient(to bottom, #74c476, #238b45); }
 
         @keyframes float {
-            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
             20% { opacity: 0.6; }
             100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
         }
@@ -41,10 +41,10 @@
         #canvas-viewport:active { cursor: grabbing; }
         #canvas-content { position: absolute; top: 0; left: 0; transform-origin: 0 0; will-change: transform; }
 
-        /* Note Cards with Resize Support */
+        /* Note Cards */
         .note-card {
             position: absolute; 
-            min-width: 200px; 
+            min-width: 220px; 
             min-height: 150px;
             width: 280px; 
             background: rgba(255, 255, 255, 0.9);
@@ -53,7 +53,7 @@
             display: flex; flex-direction: column; 
             border: 2px solid transparent;
             backdrop-filter: blur(10px); 
-            transition: box-shadow 0.3s, transform 0.2s;
+            transition: box-shadow 0.3s;
             resize: both; 
             overflow: auto; 
         }
@@ -62,17 +62,7 @@
             cursor: move; margin: -1.2rem -1.2rem 0.75rem -1.2rem;
             padding: 0.8rem 1.2rem; background: rgba(0,0,0,0.03);
             display: flex; justify-content: space-between; align-items: center;
-            flex-shrink: 0;
-            position: sticky; top: 0; z-index: 5;
-        }
-
-        .note-card:hover { transform: translateY(-2px); box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.12); }
-
-        /* Custom Resize Handle styling */
-        .note-card::-webkit-resizer {
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="gray"><path d="M11 11H1M11 6H6M11 1H11"/></svg>');
-            background-repeat: no-repeat;
-            background-position: bottom right;
+            flex-shrink: 0; position: sticky; top: 0; z-index: 5;
         }
 
         /* Color Themes for Notes */
@@ -80,13 +70,9 @@
         .note-pink { background-color: #fff1f2; border-color: #f9a8d4; }
         .note-blue { background-color: #eff6ff; border-color: #93c5fd; }
         .note-yellow { background-color: #fefce8; border-color: #fde047; }
-        .note-gold { background-color: #fffbeb; border-color: #fbbf24; }
         .note-lavender { background-color: #f5f3ff; border-color: #c4b5fd; }
-        .note-sky { background-color: #f0f9ff; border-color: #7dd3fc; }
         .note-charcoal { background-color: #1f2937; border-color: #4b5563; color: white; }
-        .note-coral { background-color: #fff5f2; border-color: #fda4af; }
 
-        /* Sidebar */
         .sidebar {
             position: fixed; top: 1rem; left: 1rem;
             background: rgba(255,255,255,0.92); backdrop-filter: blur(15px);
@@ -106,24 +92,7 @@
             box-shadow: 0 8px 20px rgba(0,0,0,0.1); cursor: pointer;
         }
 
-        /* Modal fixes */
-        .modal-container {
-            max-height: 90vh;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .modal-footer {
-            position: sticky;
-            bottom: -2.5rem;
-            background: white;
-            padding-top: 1rem;
-            padding-bottom: 2.5rem;
-            margin-top: 1rem;
-            z-index: 10;
-        }
-
+        .modal-container { max-height: 90vh; overflow-y: auto; }
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
@@ -134,114 +103,71 @@
     <div id="stars-layer" class="bg-layer" style="background: radial-gradient(circle at center, #1a1a2e 0%, #0f0f1a 100%);"></div>
     <div id="football-layer" class="bg-layer football-bg"></div>
 
-    <!-- Login Overlay -->
     <div id="auth-overlay" class="fixed inset-0 z-[2000] bg-emerald-50 flex items-center justify-center p-6">
         <div class="bg-white p-10 rounded-[3rem] shadow-2xl max-w-sm w-full text-center">
             <h1 class="text-3xl font-bold text-emerald-700 mb-6">Qank&LucyNotes</h1>
-            <input type="text" id="username-input" placeholder="Tên của bạn..." class="w-full p-4 bg-gray-50 rounded-2xl mb-4 border-none outline-none focus:ring-2 focus:ring-emerald-200 text-center font-bold">
-            <button onclick="login()" class="w-full bg-emerald-600 text-white py-4 rounded-2xl font-bold shadow-lg shadow-emerald-200">Bắt đầu</button>
+            <input type="text" id="username-input" placeholder="Tên của bạn..." class="w-full p-4 bg-gray-50 rounded-2xl mb-4 text-center font-bold outline-none">
+            <button onclick="login()" class="w-full bg-emerald-600 text-white py-4 rounded-2xl font-bold">Bắt đầu</button>
         </div>
     </div>
 
-    <!-- Sidebar Button -->
     <div id="toggle-sidebar" class="hidden" onclick="toggleSidebar()">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
     </div>
 
-    <!-- Sidebar -->
     <aside class="sidebar collapsed" id="app-sidebar">
         <div class="flex items-center justify-between mb-6 pb-4 border-b">
             <span class="font-bold text-gray-700" id="user-display">Khách</span>
             <button onclick="toggleSidebar()" class="text-gray-400">✕</button>
         </div>
-
         <div class="space-y-6">
             <div>
-                <label class="text-[10px] font-bold text-gray-400 block mb-3 uppercase tracking-wider">Màu Canvas</label>
+                <label class="text-[10px] font-bold text-gray-400 block mb-3 uppercase">Màu Canvas</label>
                 <div class="flex gap-2">
-                    <button onclick="changeTheme('mint')" class="w-8 h-8 rounded-full bg-emerald-100 border-2 border-white shadow-sm"></button>
-                    <button onclick="changeTheme('pink')" class="w-8 h-8 rounded-full bg-pink-100 border-2 border-white shadow-sm"></button>
-                    <button onclick="changeTheme('zodiac')" class="w-8 h-8 rounded-full bg-indigo-900 border-2 border-white shadow-sm"></button>
-                    <button onclick="changeTheme('messi')" class="w-8 h-8 rounded-full bg-green-500 border-2 border-white shadow-sm"></button>
+                    <button onclick="changeTheme('mint')" class="w-8 h-8 rounded-full bg-emerald-100 border-2"></button>
+                    <button onclick="changeTheme('pink')" class="w-8 h-8 rounded-full bg-pink-100 border-2"></button>
+                    <button onclick="changeTheme('zodiac')" class="w-8 h-8 rounded-full bg-indigo-900 border-2"></button>
+                    <button onclick="changeTheme('messi')" class="w-8 h-8 rounded-full bg-green-500 border-2"></button>
                 </div>
             </div>
-
-            <div>
-                <label class="text-[10px] font-bold text-gray-400 block mb-3 uppercase tracking-wider">Font Hệ Thống</label>
-                <select onchange="changeGlobalFont(this.value)" class="w-full p-2 bg-gray-50 rounded-xl text-sm border-none outline-none">
-                    <option value="Quicksand">Quicksand</option>
-                    <option value="Montserrat">Montserrat</option>
-                    <option value="Pacifico">Pacifico</option>
-                    <option value="Dancing Script">Dancing Script</option>
-                    <option value="Space Mono">Space Mono</option>
-                </select>
-            </div>
-
-            <button onclick="openNoteModal()" class="w-full bg-emerald-600 text-white py-4 rounded-2xl font-bold shadow-xl">
-                + Ghi Chú Mới
-            </button>
+            <button onclick="openNoteModal()" class="w-full bg-emerald-600 text-white py-4 rounded-2xl font-bold">+ Ghi Chú Mới</button>
         </div>
     </aside>
 
-    <!-- Canvas -->
     <div id="canvas-viewport">
         <div id="canvas-content"></div>
     </div>
 
-    <!-- Note Modal -->
     <div id="note-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[3000] hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-[2.5rem] w-full max-w-lg p-8 shadow-2xl modal-container">
-            <h2 id="modal-title" class="text-xl font-bold mb-6 text-gray-800">Tùy chỉnh Ghi chú</h2>
-            
-            <div class="flex-grow space-y-6">
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="text-[10px] font-bold text-gray-400 block mb-2 uppercase">Màu Card</label>
-                        <div class="flex flex-wrap gap-2" id="color-picker">
-                            <button onclick="pickColor('mint')" class="w-6 h-6 rounded-full bg-emerald-200 border-2" id="btn-mint"></button>
-                            <button onclick="pickColor('pink')" class="w-6 h-6 rounded-full bg-pink-200 border-2" id="btn-pink"></button>
-                            <button onclick="pickColor('blue')" class="w-6 h-6 rounded-full bg-blue-200 border-2" id="btn-blue"></button>
-                            <button onclick="pickColor('yellow')" class="w-6 h-6 rounded-full bg-yellow-200 border-2" id="btn-yellow"></button>
-                            <button onclick="pickColor('lavender')" class="w-6 h-6 rounded-full bg-purple-200 border-2" id="btn-lavender"></button>
-                            <button onclick="pickColor('charcoal')" class="w-6 h-6 rounded-full bg-gray-800 border-2" id="btn-charcoal"></button>
-                        </div>
+            <h2 class="text-xl font-bold mb-6">Tùy chỉnh Ghi chú</h2>
+            <div class="space-y-4">
+                <div class="flex gap-4">
+                    <div id="color-picker" class="flex gap-2">
+                        <button onclick="pickColor('mint')" class="w-6 h-6 rounded-full bg-emerald-200" id="btn-mint"></button>
+                        <button onclick="pickColor('pink')" class="w-6 h-6 rounded-full bg-pink-200" id="btn-pink"></button>
+                        <button onclick="pickColor('blue')" class="w-6 h-6 rounded-full bg-blue-200" id="btn-blue"></button>
                     </div>
-                    <div>
-                        <label class="text-[10px] font-bold text-gray-400 block mb-2 uppercase">Font Card</label>
-                        <select id="note-font-input" class="w-full p-2 bg-gray-50 rounded-lg text-xs outline-none border-none">
-                            <option value="inherit">Mặc định</option>
-                            <option value="Quicksand">Quicksand</option>
-                            <option value="Montserrat">Montserrat</option>
-                            <option value="Pacifico">Pacifico</option>
-                            <option value="Dancing Script">Dancing Script</option>
-                            <option value="Playfair Display">Playfair</option>
-                            <option value="Space Mono">Space Mono</option>
-                        </select>
-                    </div>
+                    <select id="note-font-input" class="flex-1 p-2 bg-gray-50 rounded-lg text-xs">
+                        <option value="inherit">Font mặc định</option>
+                        <option value="Pacifico">Pacifico</option>
+                        <option value="Dancing Script">Dancing Script</option>
+                    </select>
                 </div>
-
-                <div class="space-y-3">
-                    <input type="text" id="note-title-input" class="w-full p-3 bg-gray-50 rounded-xl outline-none font-bold text-lg" placeholder="Tiêu đề...">
-                    <textarea id="note-input" class="w-full p-4 bg-gray-50 rounded-xl outline-none text-sm min-h-[120px]" placeholder="Nội dung..."></textarea>
-                </div>
-                
-                <div class="space-y-3">
-                    <input type="text" id="media-link" class="w-full p-3 bg-gray-50 rounded-xl outline-none text-[10px]" placeholder="Link hình ảnh (URL)">
-                    <input type="text" id="spotify-link" class="w-full p-3 bg-gray-50 rounded-xl outline-none text-[10px]" placeholder="Link Spotify">
-                </div>
+                <input type="text" id="note-title-input" class="w-full p-3 bg-gray-50 rounded-xl font-bold" placeholder="Tiêu đề...">
+                <textarea id="note-input" class="w-full p-4 bg-gray-50 rounded-xl min-h-[120px]" placeholder="Nội dung..."></textarea>
+                <input type="text" id="media-link" class="w-full p-3 bg-gray-50 rounded-xl text-xs" placeholder="Link ảnh (URL)">
+                <input type="text" id="spotify-link" class="w-full p-3 bg-gray-50 rounded-xl text-xs" placeholder="Link Spotify (https://open.spotify.com/track/...)">
             </div>
-
-            <div class="modal-footer flex gap-3">
-                <button onclick="closeNoteModal()" class="flex-1 py-3 font-bold text-gray-400 hover:text-gray-600">Hủy</button>
-                <button onclick="saveNote()" class="flex-[2] bg-emerald-600 text-white py-3 rounded-xl font-bold shadow-lg">
-                    LƯU GHI CHÚ
-                </button>
+            <div class="flex gap-3 mt-6">
+                <button onclick="closeNoteModal()" class="flex-1 py-3 text-gray-400">Hủy</button>
+                <button onclick="saveNote()" class="flex-[2] bg-emerald-600 text-white py-3 rounded-xl font-bold">LƯU</button>
             </div>
         </div>
     </div>
 
     <script>
-        let scale = 1, posX = window.innerWidth / 3, posY = window.innerHeight / 3;
+        let scale = 1, posX = 0, posY = 0;
         let isPanning = false, startX, startY;
         let activeColor = 'mint', currentEditingNote = null;
         
@@ -249,140 +175,132 @@
         const content = document.getElementById('canvas-content');
 
         function login() {
-            const user = document.getElementById('username-input').value || "Người dùng";
+            const user = document.getElementById('username-input').value || "Như Huỳnh";
             document.getElementById('auth-overlay').classList.add('hidden');
             document.getElementById('app-sidebar').classList.remove('collapsed');
             document.getElementById('toggle-sidebar').classList.remove('hidden');
             document.getElementById('user-display').innerText = user;
+            posX = window.innerWidth / 4; posY = window.innerHeight / 4;
             updateTransform();
         }
 
-        function toggleSidebar() {
-            const sidebar = document.getElementById('app-sidebar');
-            sidebar.classList.toggle('collapsed');
-        }
+        function toggleSidebar() { document.getElementById('app-sidebar').classList.toggle('collapsed'); }
 
-        // Zoom & Pan
-        viewport.addEventListener('mousedown', (e) => { if (e.target === viewport || e.target === content) { isPanning = true; startX = e.clientX - posX; startY = e.clientY - posY; } });
-        window.addEventListener('mousemove', (e) => { if (isPanning) { posX = e.clientX - startX; posY = e.clientY - startY; updateTransform(); } });
+        // Pan & Zoom logic
+        viewport.addEventListener('mousedown', (e) => { if(e.target === viewport || e.target === content) { isPanning = true; startX = e.clientX - posX; startY = e.clientY - posY; }});
+        window.addEventListener('mousemove', (e) => { if(isPanning) { posX = e.clientX - startX; posY = e.clientY - startY; updateTransform(); }});
         window.addEventListener('mouseup', () => isPanning = false);
-        viewport.addEventListener('wheel', (e) => { e.preventDefault(); const delta = e.deltaY > 0 ? -0.05 : 0.05; scale = Math.min(Math.max(0.1, scale + delta), 2); updateTransform(); }, {passive:false});
+        viewport.addEventListener('wheel', (e) => { e.preventDefault(); const delta = e.deltaY > 0 ? -0.05 : 0.05; scale = Math.min(Math.max(0.2, scale + delta), 2); updateTransform(); }, {passive:false});
 
         function updateTransform() { content.style.transform = `translate(${posX}px, ${posY}px) scale(${scale})`; }
 
         function changeTheme(theme) {
-            document.querySelectorAll('.bg-layer').forEach(l => l.style.display = 'none');
+            document.querySelectorAll('.bg-layer').forEach(l => { l.style.display = 'none'; l.innerHTML = ''; });
             document.body.className = theme + '-mode';
-            if(theme === 'pink') document.getElementById('hearts-layer').style.display = 'block';
-            if(theme === 'zodiac') document.getElementById('stars-layer').style.display = 'block';
-            if(theme === 'messi') document.getElementById('football-layer').style.display = 'block';
+            const layer = document.getElementById(theme === 'pink' ? 'hearts-layer' : (theme === 'zodiac' ? 'stars-layer' : (theme === 'messi' ? 'football-layer' : '')));
+            if(layer) {
+                layer.style.display = 'block';
+                for(let i=0; i<20; i++) {
+                    const el = document.createElement('div');
+                    el.className = theme === 'pink' ? 'heart' : 'star';
+                    el.innerHTML = theme === 'pink' ? '❤' : '';
+                    el.style.left = Math.random() * 100 + 'vw';
+                    el.style.top = Math.random() * 100 + 'vh';
+                    el.style.animationDelay = Math.random() * 5 + 's';
+                    layer.appendChild(el);
+                }
+            }
         }
-
-        function changeGlobalFont(font) { document.documentElement.style.setProperty('--font-global', `'${font}', sans-serif`); }
 
         function openNoteModal(editNote = null) {
             currentEditingNote = editNote;
-            const titleInput = document.getElementById('note-title-input');
-            const contentInput = document.getElementById('note-input');
-            const fontInput = document.getElementById('note-font-input');
-            const mediaInput = document.getElementById('media-link');
-            const spotifyInput = document.getElementById('spotify-link');
-
             if (editNote) {
-                titleInput.value = editNote.dataset.title || "";
-                contentInput.value = editNote.dataset.text || "";
-                fontInput.value = editNote.dataset.font || "inherit";
-                mediaInput.value = editNote.dataset.media || "";
-                spotifyInput.value = editNote.dataset.spotify || "";
-                pickColor(editNote.dataset.color || 'mint');
+                document.getElementById('note-title-input').value = editNote.dataset.title;
+                document.getElementById('note-input').value = editNote.dataset.text;
+                document.getElementById('media-link').value = editNote.dataset.media;
+                document.getElementById('spotify-link').value = editNote.dataset.spotify;
+                pickColor(editNote.dataset.color);
             } else {
-                titleInput.value = ""; contentInput.value = ""; fontInput.value = "inherit"; mediaInput.value = ""; spotifyInput.value = ""; pickColor('mint');
+                document.getElementById('note-title-input').value = "";
+                document.getElementById('note-input').value = "";
+                document.getElementById('media-link').value = "";
+                document.getElementById('spotify-link').value = "";
             }
             document.getElementById('note-modal').classList.remove('hidden');
         }
 
-        function closeNoteModal() { document.getElementById('note-modal').classList.add('hidden'); }
-
         function pickColor(color) {
             activeColor = color;
-            document.querySelectorAll('#color-picker button').forEach(b => b.style.transform = 'scale(1)');
-            document.getElementById('btn-' + color).style.transform = 'scale(1.2)';
+            document.querySelectorAll('#color-picker button').forEach(b => b.style.outline = 'none');
+            document.getElementById('btn-' + color).style.outline = '3px solid #10b981';
         }
+
+        function closeNoteModal() { document.getElementById('note-modal').classList.add('hidden'); }
 
         function saveNote() {
             const title = document.getElementById('note-title-input').value;
             const text = document.getElementById('note-input').value;
-            const font = document.getElementById('note-font-input').value;
             const media = document.getElementById('media-link').value;
             let spotify = document.getElementById('spotify-link').value;
-            
-            if(!title && !text && !media && !spotify) return;
+            const font = document.getElementById('note-font-input').value;
+
+            if(!title && !text && !media) return;
+
+            // Sửa link Spotify sang Embed
+            if(spotify.includes('spotify.com/track/')) {
+                spotify = spotify.replace('spotify.com/track/', 'spotify.com/embed/track/');
+            }
 
             if (currentEditingNote) {
-                updateNote(currentEditingNote, title, text, media, spotify, activeColor, font);
+                updateNoteContent(currentEditingNote, title, text, media, spotify, activeColor, font);
             } else {
                 createNote(title, text, media, spotify, activeColor, font);
             }
             closeNoteModal();
         }
 
-        function updateNote(note, title, text, media, spotify, color, font) {
-            note.dataset.title = title; note.dataset.text = text; note.dataset.media = media; 
-            note.dataset.spotify = spotify; note.dataset.color = color; note.dataset.font = font;
-            note.className = `note-card note-${color}`;
-            note.style.fontFamily = font === 'inherit' ? 'var(--font-global)' : `'${font}', sans-serif`;
-            note.querySelector('.note-body-content').innerHTML = `
-                ${title ? `<h3 class="font-bold mb-1 border-b pb-1">${title}</h3>` : ''}
-                ${text ? `<p class="text-sm opacity-90">${text}</p>` : ''}
-                ${media ? `<img src="${media}" class="w-full rounded-lg mt-2 shadow-sm" onerror="this.remove()">` : ''}
-                ${spotify ? `<iframe src="${spotify.replace('spotify.com/', 'spotify.com/embed/')}" width="100%" height="80" frameBorder="0" class="mt-2 rounded-lg"></iframe>` : ''}
-            `;
-        }
-
         function createNote(title, text, media, spotify, color, font) {
             const note = document.createElement('div');
             note.className = `note-card note-${color}`;
-            note.style.left = ((-posX + window.innerWidth/2) / scale - 140) + 'px';
-            note.style.top = ((-posY + window.innerHeight/2) / scale - 100) + 'px';
-            note.style.fontFamily = font === 'inherit' ? 'var(--font-global)' : `'${font}', sans-serif`;
-            note.dataset.font = font; note.dataset.title = title; note.dataset.text = text; note.dataset.media = media; note.dataset.spotify = spotify; note.dataset.color = color;
-
+            note.style.left = ((-posX + window.innerWidth/2)/scale - 140) + 'px';
+            note.style.top = ((-posY + window.innerHeight/2)/scale - 100) + 'px';
+            note.dataset.title = title; note.dataset.text = text; note.dataset.media = media; note.dataset.spotify = spotify; note.dataset.color = color;
+            
             note.innerHTML = `
-                <div class="note-header">
-                    <span class="text-[7px] font-bold opacity-30 tracking-widest uppercase">Ghi chú</span>
-                    <button onclick="this.closest('.note-card').remove()" class="hover:text-red-500 p-1">✕</button>
-                </div>
-                <div class="note-body-content flex-grow pointer-events-auto" ondblclick="event.stopPropagation(); openNoteModal(this.closest('.note-card'))">
-                    ${title ? `<h3 class="font-bold mb-1 border-b pb-1">${title}</h3>` : ''}
-                    ${text ? `<p class="text-sm opacity-90">${text}</p>` : ''}
-                    ${media ? `<img src="${media}" class="w-full rounded-lg mt-2 shadow-sm" onerror="this.remove()">` : ''}
-                    ${spotify ? `<iframe src="${spotify.replace('spotify.com/', 'spotify.com/embed/')}" width="100%" height="80" frameBorder="0" class="mt-2 rounded-lg"></iframe>` : ''}
-                </div>
-                <div class="mt-4 text-[8px] opacity-40 italic flex justify-between uppercase flex-shrink-0">
-                    <span>${new Date().toLocaleDateString()}</span>
-                    <span>Sửa: Nhấn đúp</span>
-                </div>
+                <div class="note-header"><span class="text-[8px] font-bold opacity-30 uppercase">Note</span><button onclick="this.closest('.note-card').remove()">✕</button></div>
+                <div class="note-body-content" ondblclick="openNoteModal(this.closest('.note-card'))"></div>
             `;
+            updateNoteContent(note, title, text, media, spotify, color, font);
             content.appendChild(note);
             makeDraggable(note);
+        }
+
+        function updateNoteContent(note, title, text, media, spotify, color, font) {
+            note.style.fontFamily = font === 'inherit' ? 'var(--font-global)' : font;
+            const body = note.querySelector('.note-body-content');
+            body.innerHTML = `
+                ${title ? `<h3 class="font-bold border-b mb-2">${title}</h3>` : ''}
+                ${text ? `<p class="text-sm">${text}</p>` : ''}
+                ${media ? `<img src="${media}" class="w-full rounded-lg mt-2">` : ''}
+                ${spotify ? `<iframe src="${spotify}" width="100%" height="80" frameBorder="0" class="mt-2 rounded-lg"></iframe>` : ''}
+            `;
         }
 
         function makeDraggable(el) {
             const h = el.querySelector('.note-header');
             let isD = false, nX, nY;
-            h.addEventListener('mousedown', (e) => { 
-                if (e.offsetX > h.clientWidth - 20 && e.offsetY > h.clientHeight - 20) return;
-                e.stopPropagation(); isD = true; 
-                const r = el.getBoundingClientRect(); 
-                nX = (e.clientX - r.left)/scale; nY = (e.clientY - r.top)/scale; 
-                el.style.zIndex = 1000; 
+            h.addEventListener('mousedown', (e) => {
+                isD = true; nX = e.clientX / scale - el.offsetLeft; nY = e.clientY / scale - el.offsetTop;
+                el.style.zIndex = 1000;
             });
-            window.addEventListener('mousemove', (e) => { if (isD) { el.style.left = ((e.clientX - posX)/scale - nX) + 'px'; el.style.top = ((e.clientY - posY)/scale - nY) + 'px'; } });
+            window.addEventListener('mousemove', (e) => {
+                if(isD) { el.style.left = (e.clientX / scale - nX) + 'px'; el.style.top = (e.clientY / scale - nY) + 'px'; }
+            });
             window.addEventListener('mouseup', () => { isD = false; el.style.zIndex = 1; });
         }
 
-        viewport.style.backgroundImage = 'radial-gradient(rgba(0,0,0,0.05) 1.5px, transparent 1.5px)';
-        viewport.style.backgroundSize = '40px 40px';
+        viewport.style.backgroundImage = 'radial-gradient(rgba(0,0,0,0.05) 1px, transparent 1px)';
+        viewport.style.backgroundSize = '30px 30px';
     </script>
 </body>
 </html>
